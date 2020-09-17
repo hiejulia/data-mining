@@ -10,4 +10,5 @@
 	- n grams 
 	- Predictive model for content scoring 
 	- NLTK for head line 
-	
+
+- Regression model with geo heat map visualisation utilised different api datasources to extract underpriced housing 	
