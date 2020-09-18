@@ -1,0 +1,946 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+    },
+    "language_info": {
+      "codemirror_mode": {
+        "name": "ipython",
+        "version": 3
+      },
+      "file_extension": ".py",
+      "mimetype": "text/x-python",
+      "name": "python",
+      "nbconvert_exporter": "python",
+      "pygments_lexer": "ipython3",
+      "version": "3.7.6"
+    },
+    "nav_menu": {
+      "height": "279px",
+      "width": "309px"
+    },
+    "toc": {
+      "nav_menu": {},
+      "number_sections": true,
+      "sideBar": true,
+      "skip_h1_title": false,
+      "toc_cell": false,
+      "toc_position": {},
+      "toc_section_display": "block",
+      "toc_window_display": false
+    },
+    "colab": {
+      "name": "02_end_to_end_machine_learning_project.ipynb",
+      "provenance": [],
+      "collapsed_sections": []
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "QkJePSBAMcuv",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "# Python ≥3.5 is required\n",
+        "import sys\n",
+        "assert sys.version_info >= (3, 5)\n",
+        "\n",
+        "# Scikit-Learn ≥0.20 is required\n",
+        "import sklearn\n",
+        "assert sklearn.__version__ >= \"0.20\"\n",
+        "\n",
+        "# Common imports\n",
+        "import numpy as np\n",
+        "import os\n",
+        "\n",
+        "# To plot pretty figures\n",
+        "%matplotlib inline\n",
+        "import matplotlib as mpl\n",
+        "import matplotlib.pyplot as plt\n",
+        "mpl.rc('axes', labelsize=14)\n",
+        "mpl.rc('xtick', labelsize=12)\n",
+        "mpl.rc('ytick', labelsize=12)\n",
+        "\n",
+        "\n",
+        "# Ignore useless warnings (see SciPy issue #5998)\n",
+        "import warnings\n",
+        "warnings.filterwarnings(action=\"ignore\", message=\"^internal gelsd\")"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Z-y7tgM-a_5-",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 51
+        },
+        "outputId": "a976f7a3-10fa-4596-cc4b-6634bbb570c9"
+      },
+      "source": [
+        "!pip install selenium"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "Requirement already satisfied: selenium in /usr/local/lib/python3.6/dist-packages (3.141.0)\n",
+            "Requirement already satisfied: urllib3 in /usr/local/lib/python3.6/dist-packages (from selenium) (1.24.3)\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "ZsaogqhKDejr",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "import pandas as pd\n",
+        "from selenium import webdriver\n",
+        "from selenium.webdriver.common.desired_capabilities import DesiredCapabilities\n",
+        "from bs4 import BeautifulSoup\n",
+        "import matplotlib.pyplot as plt\n",
+        "%matplotlib inline\n",
+        "\n",
+        "import requests\n",
+        "import json\n",
+        "pd.set_option('display.max_colwidth', 200)"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "sBWrzLIDnc9t",
+        "colab_type": "text"
+      },
+      "source": [
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "BHY55Wxwnr3w",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "import requests\n",
+        "import json\n",
+        "import time\n",
+        "\n",
+        "pd.set_option('display.max_colwidth', 200)"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "y7By6QDtnr-j",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "from sklearn import datasets\n",
+        "import matplotlib.pyplot as plt\n",
+        "import numpy as np\n",
+        "%matplotlib inline"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "x7m2RNeAnsAa",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "digits = datasets.load_digits()"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "-U-wmLGEnsCV",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "def display_img(img_no):\n",
+        "    fig, ax = plt.subplots()\n",
+        "    ax.set_xticklabels([])\n",
+        "    ax.set_yticklabels([])\n",
+        "    ax.matshow(digits.images[img_no], cmap = plt.cm.binary);"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Rgmcv0X_nsEJ",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 255
+        },
+        "outputId": "fdb2002f-92f2-4283-d118-4138224d0cea"
+      },
+      "source": [
+        "display_img(1)"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "image/png": "iVBORw0KGgoAAAANSUhEUgAAAOsAAADuCAYAAADYx/BmAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAADh0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uMy4yLjIsIGh0dHA6Ly9tYXRwbG90bGliLm9yZy+WH4yJAAAEs0lEQVR4nO3dMU4WaQDH4ZkNtgYTaGyWI1BwAG7AFaisPQLegNpbeAKxp6C1c+uPAm3VzNabZVcH5f2+H3meFif/ifDLjAl+77wsywTsvj+2fQPAzxErRIgVIsQKEWKFCLFCxKPHOs/zq8fe2MbW6D1bra3H2BvxZB35FzT0mzF4z1Zr67fveQ2GiHnNbzAdHBwsR0dHqwY2m810eHi48rYeZuTWr+x9/Phx9TVfv36dnj17tvq679+/r77m27dv097e3urrXr58ufqaL1++TM+fP1993f7+/uprCj8fnz59mm5vb+f7vrbqO3J0dDRdX1+vGuffTk9Ph23d3d0N23rz5s2wrbOzs2FbI52cnPzn17wGQ4RYIUKsECFWiBArRIgVIsQKEWKFCLFChFghQqwQ8cNY53l+Nc/z9TzP15vNZsQ9Aff4YazLsrxdluVkWZaTkf9jAfgnr8EQIVaIECtEiBUixAoRYoUIsUKEWCFCrBAhVogQK0Ss/9h1ftlDPk3+oT58+DBs6/3798O2nuqHfP8fT1aIECtEiBUixAoRYoUIsUKEWCFCrBAhVogQK0SIFSLEChFihQixQoSzbiDCWTcQ4TUYIsQKEWKFCLFChFghQqwQIVaIECtEiBUixAoRjs+Ypunm5mbo3tXV1dC9UY6Pj7d9C0+aJytEiBUixAoRYoUIsUKEWCFCrBAhVogQK0SIFSLEChFihQixQoRYIcLxGRDh+AyI8BoMEWKFCLFChFghQqwQIVaIECtEiBUixAoRYoUIsULEzp51c3l5OWzr4uJi2NY0TdPnz5+H7o1yenq67Vt40jxZIUKsECFWiBArRIgVIsQKEWKFCLFChFghQqwQIVaIECtEiBUiHJ8BEY7PgAivwRAhVogQK0SIFSLEChFihQixQoRYIUKsECFWiBArROzs8RmvX78etnV+fj5sa5qm6cWLF0P3Rrm7u9v2LTxpnqwQIVaIECtEiBUixAoRYoUIsUKEWCFCrBAhVogQK0SIFSLEChGOz4AIx2dAhNdgiBArRIgVIsQKEWKFCLFChFghQqwQIVaIECtEiBUidvb4DHpubm6GbR0fHw/b2hWerBAhVogQK0SIFSLEChFihQixQoRYIUKsECFWiBArRIgVIsQKEY7PgAjHZ0CE12CIECtEiBUixAoRYoUIsUKEWCFCrBAhVogQK0SIFSLEChFihQixQoRYIUKsECFWiBArRIgVIsQKEWKFCLFChFghQqwQIVaIECtEOOsGIpx1AxFegyFCrBAhVogQK0SIFSLEChFihQixQoRYIUKsECFWiNjb9g3sgv39/aF7Z2dnw7bevXs3bOvq6mrY1vn5+bCtXeHJChFihQixQoRYIUKsECFWiBArRIgVIsQKEWKFCLFChFghQqwQ4fgMiHB8BkR4DYYIsUKEWCFCrBAhVogQK0SIFSLEChFihQixQoRYIWJeluXn//A8b6Zp+mvlxsE0Tbcrr3mokVuj92y1th669+eyLPf+Ev6qWB9inufrZVlOHnVkC1uj92y1th5jz2swRIgVIkbE+nbAxja2Ru/Zam399r1H/zcr8Ht4DYYIsUKEWCFCrBAhVoj4G0KkEDF82LMyAAAAAElFTkSuQmCC\n",
+            "text/plain": [
+              "<Figure size 432x288 with 1 Axes>"
+            ]
+          },
+          "metadata": {
+            "tags": [],
+            "needs_background": "light"
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Z2gv80wZnsGf",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 153
+        },
+        "outputId": "ee3ebb1b-3559-4f92-fdfe-a01d789a2362"
+      },
+      "source": [
+        "digits.images[1]"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "array([[ 0.,  0.,  0., 12., 13.,  5.,  0.,  0.],\n",
+              "       [ 0.,  0.,  0., 11., 16.,  9.,  0.,  0.],\n",
+              "       [ 0.,  0.,  3., 15., 16.,  6.,  0.,  0.],\n",
+              "       [ 0.,  7., 15., 16., 16.,  2.,  0.,  0.],\n",
+              "       [ 0.,  0.,  1., 16., 16.,  3.,  0.,  0.],\n",
+              "       [ 0.,  0.,  1., 16., 16.,  6.,  0.,  0.],\n",
+              "       [ 0.,  0.,  1., 16., 16.,  6.,  0.,  0.],\n",
+              "       [ 0.,  0.,  0., 11., 16., 10.,  0.,  0.]])"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 26
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Z0O0XgKVnsIr",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "2898265c-7d78-41b7-a490-ae788e856b51"
+      },
+      "source": [
+        "digits.data[1].shape"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "(64,)"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 27
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "_tfxP4-MnsKv",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "9c3966a4-e8a5-43c5-aba5-617cb7d0ed6c"
+      },
+      "source": [
+        "digits.target[1]"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "1"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 29
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "5ePuy6-insM3",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "import pandas as pd\n",
+        "from sklearn.metrics.pairwise import cosine_similarity\n",
+        "from sklearn.metrics.pairwise import chi2_kernel"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "cwZp7ChAnsPH",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "# x, y \n",
+        "X = digits.data\n",
+        "y = digits.target"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "nQkptzX5nsRf",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 51
+        },
+        "outputId": "6318ae78-4748-4025-9314-c1f0af251219"
+      },
+      "source": [
+        "# 1 \n",
+        "k_sim = chi2_kernel(X[1].reshape(1,-1), X)\n",
+        "k_sim"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "array([[7.57695024e-116, 1.00000000e+000, 7.91131186e-057, ...,\n",
+              "        6.32320868e-045, 1.08114363e-069, 6.95164766e-078]])"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 36
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "S6uWjaJunsXB",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "kf = pd.DataFrame(k_sim).T\n",
+        "kf.columns = ['similarity']"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "RijmJgL4nsZR",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 419
+        },
+        "outputId": "9dc101ca-bd96-408c-a07a-046ac690c7c9"
+      },
+      "source": [
+        "kf.sort_values('similarity', ascending=False)"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>similarity</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>1</th>\n",
+              "      <td>1.000000e+00</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>93</th>\n",
+              "      <td>4.765664e-10</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>466</th>\n",
+              "      <td>1.383805e-13</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1112</th>\n",
+              "      <td>8.400229e-18</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1120</th>\n",
+              "      <td>4.262557e-18</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>...</th>\n",
+              "      <td>...</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>565</th>\n",
+              "      <td>3.111602e-129</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1493</th>\n",
+              "      <td>1.976360e-129</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>786</th>\n",
+              "      <td>1.205077e-129</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>30</th>\n",
+              "      <td>1.092519e-130</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1205</th>\n",
+              "      <td>3.110675e-133</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "<p>1797 rows × 1 columns</p>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "         similarity\n",
+              "1      1.000000e+00\n",
+              "93     4.765664e-10\n",
+              "466    1.383805e-13\n",
+              "1112   8.400229e-18\n",
+              "1120   4.262557e-18\n",
+              "...             ...\n",
+              "565   3.111602e-129\n",
+              "1493  1.976360e-129\n",
+              "786   1.205077e-129\n",
+              "30    1.092519e-130\n",
+              "1205  3.110675e-133\n",
+              "\n",
+              "[1797 rows x 1 columns]"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 38
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "KqTUyKrDYMKq",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 255
+        },
+        "outputId": "ac159c3c-9a27-44f5-98aa-43b1bf521eb9"
+      },
+      "source": [
+        "display_img(1167)"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "image/png": "iVBORw0KGgoAAAANSUhEUgAAAOsAAADuCAYAAADYx/BmAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAADh0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uMy4yLjIsIGh0dHA6Ly9tYXRwbG90bGliLm9yZy+WH4yJAAAE+ElEQVR4nO3dMW4UZwCG4ZmQBiokTB0fYZHcww3wEahoOQK+Am0azuAb7AEs2RwAaVPbhSuo0KRIFckRzAr/3pc8T2vG32L71QyS2X9elmUCDt9vD/0CgB8jVogQK0SIFSLEChFihYh7j3We57f3vfEQW6P3bLW27mNvxJ115Bdo6Ddj8J6t1tZP3/MYDBHzmt9gOjo6Wo6Pj1cNXF9fT8+fP1/5svaz79aXL1/22ru9vZ2ePn26+rrPnz+vvubbt2/To0ePVl+3z+v7+vXr9Pjx49XXPXv2bPU1+34Nnzx5svqakT+L++7tdrvp5uZmvutjv6/5RMfHx9PFxcWq8YKrq6uhe6enp7/k1ps3b4ZtbTabYVsjnZyc/OfHPAZDhFghQqwQIVaIECtEiBUixAoRYoUIsUKEWCFCrBDx3VjneX47z/PFPM8X19fXI14TcIfvxrosy5/Lspwsy3Iy8n8sAP/mMRgixAoRYoUIsUKEWCFCrBAhVogQK0SIFSLEChFihYhVb/L9qzo7Oxu6t8870Be2Rr6h+Ha7HbY1Tf+8wf1Dc2eFCLFChFghQqwQIVaIECtEiBUixAoRYoUIsUKEWCFCrBAhVogQK0Q46wYinHUDER6DIUKsECFWiBArRIgVIsQKEWKFCLFChFghQqwQcbDHZ+x2u2Fb5+fnw7amaZouLy+HbW02m2Fbt7e3w7ZG/nxMk+MzgBXEChFihQixQoRYIUKsECFWiBArRIgVIsQKEWKFCLFChFghQqwQ4fgMiHB8BkR4DIYIsUKEWCFCrBAhVogQK0SIFSLEChFihQixQoRYIeJgz7r59OnTsK2XL18O25qmsefPjHR6ejpsa7vdDtuapml69erV0L27uLNChFghQqwQIVaIECtEiBUixAoRYoUIsUKEWCFCrBAhVogQK0Q4PgMiHJ8BER6DIUKsECFWiBArRIgVIsQKEWKFCLFChFghQqwQIVaIONjjMy4vL4dtHcLRCL+Cq6urh34JvzR3VogQK0SIFSLEChFihQixQoRYIUKsECFWiBArRIgVIsQKEWKFCMdnQITjMyDCYzBEiBUixAoRYoUIsUKEWCFCrBAhVogQK0SIFSLEChEHe3zGixcvhm19/Phx2NZou91u2NbZ2dmwre12O2zrULizQoRYIUKsECFWiBArRIgVIsQKEWKFCLFChFghQqwQIVaIECtEOD4DIhyfAREegyFCrBAhVogQK0SIFSLEChFihQixQoRYIUKsECFWiDjY4zNev349bOvdu3fDtqZpms7Pz4dtvX//ftjWyOMzNpvNsK1D4c4KEWKFCLFChFghQqwQIVaIECtEiBUixAoRYoUIsUKEWCFCrBAhVohw1g1EOOsGIjwGQ4RYIUKsECFWiBArRIgVIsQKEWKFCLFChFghQqwQcbBn3Yz04cOHoXsjz9YZ+XcbeT7R/5E7K0SIFSLEChFihQixQoRYIUKsECFWiBArRIgVIsQKEWKFCLFChOMzIMLxGRDhMRgixAoRYoUIsUKEWCFCrBAhVogQK0SIFSLEChFihYh5WZYf/8PzfD1N018rN46mabpZec2+Rm6N3rPV2tp3749lWe78JfxVse5jnueLZVlO7nXkAbZG79lqbd3HnsdgiBArRIyI9c8BGw+xNXrPVmvrp+/d+79ZgZ/DYzBEiBUixAoRYoUIsULE39o4JhfkJUgNAAAAAElFTkSuQmCC\n",
+            "text/plain": [
+              "<Figure size 432x288 with 1 Axes>"
+            ]
+          },
+          "metadata": {
+            "tags": [],
+            "needs_background": "light"
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "rFmkfNfVYMNQ",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "co_sim = cosine_similarity(X[1].reshape(1,-1), X)"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "5Wp_Ky00YMPq",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "cosf = pd.DataFrame(co_sim).T\n",
+        "cosf.columns = ['similarity']"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "_v-vkfpzYMRw",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 419
+        },
+        "outputId": "262202d7-52c1-4c95-be6e-f34cca143018"
+      },
+      "source": [
+        "cosf.sort_values('similarity', ascending=False)"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>similarity</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>1</th>\n",
+              "      <td>1.000000</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>93</th>\n",
+              "      <td>0.975587</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1120</th>\n",
+              "      <td>0.955550</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1112</th>\n",
+              "      <td>0.954798</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1050</th>\n",
+              "      <td>0.953139</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>...</th>\n",
+              "      <td>...</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>974</th>\n",
+              "      <td>0.479711</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1589</th>\n",
+              "      <td>0.478218</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>941</th>\n",
+              "      <td>0.476714</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>617</th>\n",
+              "      <td>0.453607</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1025</th>\n",
+              "      <td>0.447522</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "<p>1797 rows × 1 columns</p>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "      similarity\n",
+              "1       1.000000\n",
+              "93      0.975587\n",
+              "1120    0.955550\n",
+              "1112    0.954798\n",
+              "1050    0.953139\n",
+              "...          ...\n",
+              "974     0.479711\n",
+              "1589    0.478218\n",
+              "941     0.476714\n",
+              "617     0.453607\n",
+              "1025    0.447522\n",
+              "\n",
+              "[1797 rows x 1 columns]"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 45
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "VG7ZJD0tYMUL",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 255
+        },
+        "outputId": "a448e47a-c2b1-4502-eab0-4be0c263b950"
+      },
+      "source": [
+        "display_img(1626)"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "image/png": "iVBORw0KGgoAAAANSUhEUgAAAOsAAADuCAYAAADYx/BmAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAADh0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uMy4yLjIsIGh0dHA6Ly9tYXRwbG90bGliLm9yZy+WH4yJAAAES0lEQVR4nO3dQU4bWQBFUVerEZlagjGGNXgL3kr2RJbAGliCV8AA0WMjMUViUD2OmlZSNP7ui86ZksqzklzVj5Twp3meV8D/3x+n/gDA7xErRIgVIsQKEWKFCLFCxNFjnabp+7E3TrE1es9Wa+sYeyPerCN/gYb+Zgzes9Xa+vQ9x2CImJb8C6aLi4t5s9ksGjgcDqvLy8uFH+tjRm79l72Hh4fFz7y9va3Ozs4WP3d+fr74mdfX19W3b98WP3d1dbX4GX8+fvb09LR6fn6e3vvan0t+os1ms9rv94vG+afdbjds6+bmZtjW7e3tsK2varvd/uvXHIMhQqwQIVaIECtEiBUixAoRYoUIsUKEWCFCrBAhVoj4ZazTNH2fpmk/TdP+cDiM+EzAO34Z6zzPP+Z53s7zvB35PxaAnzkGQ4RYIUKsECFWiBArRIgVIsQKEWKFCLFChFghQqwQseibfNNzd3c3bMs3+T4ub1aIECtEiBUixAoRYoUIsUKEWCFCrBAhVogQK0SIFSLEChFihQixQoS7biDCXTcQ4RgMEWKFCLFChFghQqwQIVaIECtEiBUixAoRYoUI12d8cev1+tQfgU/izQoRYoUIsUKEWCFCrBAhVogQK0SIFSLEChFihQixQoRYIUKsECFWiHB9BkS4PgMiHIMhQqwQIVaIECtEiBUixAoRYoUIsUKEWCFCrBAhVohw180J3N/fD9u6vr4etsVxebNChFghQqwQIVaIECtEiBUixAoRYoUIsUKEWCFCrBAhVogQK0S4PgMiXJ8BEY7BECFWiBArRIgVIsQKEWKFCLFChFghQqwQIVaIECtEuD7jBFxpwUd4s0KEWCFCrBAhVogQK0SIFSLEChFihQixQoRYIUKsECFWiBArRLg+AyJcnwERjsEQIVaIECtEiBUixAoRYoUIsUKEWCFCrBAhVogQK0S4PuOL2+12p/4IfBJvVogQK0SIFSLEChFihQixQoRYIUKsECFWiBArRIgVIsQKEWKFCNdnQITrMyDCMRgixAoRYoUIsUKEWCFCrBAhVogQK0SIFSLEChFihQjXZ5zAdrsdtvXy8jJsi+PyZoUIsUKEWCFCrBAhVogQK0SIFSLEChFihQixQoRYIUKsECFWiBArRLjrBiLcdQMRjsEQIVaIECtEiBUixAoRYoUIsUKEWCFCrBAhVogQK0S46+YE1uv1sK3Hx8dhWxyXNytEiBUixAoRYoUIsUKEWCFCrBAhVogQK0SIFSLEChFihQixQoTrMyDC9RkQ4RgMEWKFCLFChFghQqwQIVaIECtEiBUixAoRYoUIsULENM/z7//gaTqsVqu/Fm5crFar54XPfNTIrdF7tlpbH927muf53X+EvyjWj5imaT/P8/aoIyfYGr1nq7V1jD3HYIgQK0SMiPXHgI1TbI3es9Xa+vS9o/+dFfgcjsEQIVaIECtEiBUixAoRfwM9nPd8dF12YAAAAABJRU5ErkJggg==\n",
+            "text/plain": [
+              "<Figure size 432x288 with 1 Axes>"
+            ]
+          },
+          "metadata": {
+            "tags": [],
+            "needs_background": "light"
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "bE1xcPLuYMYc",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "za6-eitNYMcJ",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "sX2oUGRCYMed",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "OTFmS7KeYMgh",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "6RsYsLfGYMis",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "AKLBQivXYMk4",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Aayn1SbFYMm9",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "uajXUrtAYMpN",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "8DenPlk0YMrn",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "F2dOccUeYMt4",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "9KgGOsWwYMwG",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "ucH18c8eYMyY",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "DDVW_WbTYM02",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "XEsonmmwYM28",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "xC7LAL8NYM5J",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "0mFl18mtYM7e",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "okr63Zj_YM9b",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}
