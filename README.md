@@ -46,6 +46,21 @@
 	- collaborative filtering
 	- hybrid system 
 
+- Regression analysis 
+	- Residual Analysis
+	- Normality Test (Q-Q Plot)
+	- R-Squared: Goodness of Fit
+	- Cross Validation k fold cross validation 
+
+- Decision Tree Regression 
+	- Mean Squared Error (MSE)
+	- Mean Absolute Error
+	- Variance Reduction 
+	- Gini Impurity/Index
+	- Information Gain
+	
+
+
 
 
 
