@@ -1,4 +1,8 @@
 # data-mining
+Run this project iteractive -> 
+
+https://notebooks.gesis.org/binder/jupyter/user/hiejulia-data-mining-b9al5ice/tree#notebooks
+
 
 # Feature description in this repo 
 - Stock market analyse on time series data regression
@@ -60,9 +64,10 @@
 	- Information Gain
 	
 
-
-
-
+- Clustering
+	- K means 
+	- hierarchical clustering 
+	- 
 
 
 
