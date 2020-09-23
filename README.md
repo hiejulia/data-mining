@@ -67,7 +67,8 @@ https://notebooks.gesis.org/binder/jupyter/user/hiejulia-data-mining-b9al5ice/tr
 - Clustering
 	- K means 
 	- hierarchical clustering 
-	- 
+		- Agglomerative hierarchical clustering and Divisive hierarchical clustering.
+	- Affinity propagation clustering
 
 
 
